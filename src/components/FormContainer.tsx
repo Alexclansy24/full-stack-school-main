@@ -69,6 +69,36 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         });
         relatedData = { lessons: examLessons };
         break;
+        case "lesson":
+        const [lessonSubjects, lessonClasses, lessonTeachers] = await Promise.all([
+          prisma.subject.findMany({
+            select: { id: true, name: true },
+          }),
+          prisma.class.findMany({
+            select: { id: true, name: true },
+          }),
+          prisma.teacher.findMany({
+            select: { id: true, name: true, surname: true },
+          }),
+        ]);
+        relatedData = {
+          subjects: lessonSubjects,
+          classes: lessonClasses,
+          teachers: lessonTeachers,
+        };
+        break;
+        case "event":
+        const eventClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+        });
+        relatedData = { classes: eventClasses };
+        break;
+        case "announcement":
+        const announcementClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+        });
+        relatedData = { classes: announcementClasses };
+        break;     
 
       default:
         break;

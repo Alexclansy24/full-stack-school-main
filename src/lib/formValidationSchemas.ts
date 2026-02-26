@@ -104,3 +104,47 @@ export const parentSchema = z.object({
 });
 
 export type ParentSchema = z.infer<typeof parentSchema>;
+
+export const lessonSchema = z.object({
+  id: z.number().optional(),
+
+  name: z.string().min(1, "Lesson name is required"),
+
+  day: z.enum([
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY", 
+  ]),
+
+  startTime: z.string().min(1, "Start time required"),
+  endTime: z.string().min(1, "End time required"),
+
+  subjectId: z.string().min(1, "Subject required"),
+  classId: z.string().min(1, "Class required"),
+  teacherId: z.string().min(1, "Teacher required"),
+});
+
+export type LessonSchema = z.infer<typeof lessonSchema>;
+
+export const eventSchema = z.object({
+  id: z.coerce.number().optional(),
+  title: z.string().min(1, { message: "Title is required!" }),
+  description: z.string().min(1, { message: "Description is required!" }),
+  startTime: z.coerce.date({ message: "Start time is required!" }),
+  endTime: z.coerce.date({ message: "End time is required!" }),
+  classId: z.coerce.number().optional(),
+});
+
+export type EventSchema = z.infer<typeof eventSchema>;
+
+export const announcementSchema = z.object({
+  id: z.coerce.number().optional(),
+  title: z.string().min(1, { message: "Title is required!" }),
+  description: z.string().min(1, { message: "Description is required!" }),
+  date: z.coerce.date({ message: "Date is required!" }),
+  classId: z.coerce.number().optional(),
+});
+
+export type AnnouncementSchema = z.infer<typeof announcementSchema>;
