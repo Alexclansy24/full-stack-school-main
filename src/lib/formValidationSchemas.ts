@@ -87,3 +87,20 @@ export const examSchema = z.object({
 });
 
 export type ExamSchema = z.infer<typeof examSchema>;
+
+export const parentSchema = z.object({
+  id: z.string().optional(),
+  username: z.string().min(3, "Username is required"),
+  email: z.string().email("Invalid email"),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long!" })
+    .optional()
+    .or(z.literal("")),
+  name: z.string().min(1, "First name is required"),
+  surname: z.string().min(1, "Last name is required"),
+  phone: z.string().optional(),
+  address: z.string().min(1, "Address is required"),
+});
+
+export type ParentSchema = z.infer<typeof parentSchema>;

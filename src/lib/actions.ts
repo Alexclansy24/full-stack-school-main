@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   ClassSchema,
   ExamSchema,
+  ParentSchema,
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
@@ -465,4 +466,82 @@ export const deleteExam = async (
     console.log(err);
     return { success: false, error: true };
   }
+};
+
+export const createParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  try {
+    // 1️⃣ Create user in Clerk
+    const user = await clerkClient.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "parent" },
+    });
+
+    // 2️⃣ Create parent in database
+    await prisma.parent.create({
+      data: {
+        id: user.id, // link with Clerk
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone || "",
+        address: data.address,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  try {
+    await prisma.parent.update({
+      where: { id: data.id },
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone,
+        address: data.address,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteParent = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get("id") as string;
+
+  try {
+  await prisma.parent.delete({
+    where: { id },
+  });
+
+  await clerkClient.users.deleteUser(id);
+
+  return { success: true, error: false };
+} catch (err) {
+  console.log(err);
+  return { success: false, error: true };
+}
 };
