@@ -78,7 +78,7 @@ const renderRow = (item: ResultList) => (
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.studentName + " " + item.studentName}</td>
+    <td>{item.studentName + " " + item.studentSurname}</td>
     <td className="hidden md:table-cell">{item.score}</td>
     <td className="hidden md:table-cell">
       {item.teacherName + " " + item.teacherSurname}
@@ -186,24 +186,21 @@ const renderRow = (item: ResultList) => (
   ]);
 
   const data = dataRes.map((item) => {
-    const assessment = item.exam || item.assignment;
-
-    if (!assessment) return null;
-
-    const isExam = "startTime" in assessment;
-
-    return {
-      id: item.id,
-      title: assessment.title,
-      studentName: item.student.name,
-      studentSurname: item.student.surname,
-      teacherName: assessment.lesson.teacher.name,
-      teacherSurname: assessment.lesson.teacher.surname,
-      score: item.score,
-      className: assessment.lesson.class.name,
-      startTime: isExam ? assessment.startTime : assessment.startDate,
-    };
-  });
+  const assessment = item.exam || item.assignment;
+  if (!assessment) return null;
+  const isExam = "startTime" in assessment;
+  return {
+    id: item.id,
+    title: assessment.title,
+    studentName: item.student.name,
+    studentSurname: item.student.surname,
+    teacherName: assessment.lesson.teacher.name,
+    teacherSurname: assessment.lesson.teacher.surname,
+    score: item.score,
+    className: assessment.lesson.class.name,
+    startTime: isExam ? assessment.startTime : assessment.startDate,
+  };
+}).filter(Boolean) as ResultList[];
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

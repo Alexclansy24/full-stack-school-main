@@ -11,6 +11,7 @@ import {
   LessonSchema,
   EventSchema,
   AnnouncementSchema,
+  ResultSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -733,6 +734,64 @@ export const deleteAnnouncement = async (
   const id = data.get("id") as string;
   try {
     await prisma.announcement.delete({
+      where: { id: parseInt(id) },
+    });
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+
+export const createResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  try {
+    await prisma.result.create({
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        ...(data.examId ? { examId: data.examId } : {}),
+        ...(data.assignmentId ? { assignmentId: data.assignmentId } : {}),
+      },
+    });
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  try {
+    await prisma.result.update({
+      where: { id: data.id },
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        ...(data.examId ? { examId: data.examId } : {}),
+        ...(data.assignmentId ? { assignmentId: data.assignmentId } : {}),
+      },
+    });
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteResult = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  const id = data.get("id") as string;
+  try {
+    await prisma.result.delete({
       where: { id: parseInt(id) },
     });
     return { success: true, error: false };
